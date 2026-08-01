@@ -1,0 +1,6 @@
+Database/*.db-*
+.vscode
+mes-core/build
+mes-server/build
+mes-ui/target/
+.DS_Store

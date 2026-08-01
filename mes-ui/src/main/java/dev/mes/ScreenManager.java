@@ -15,4 +15,6 @@ public class ScreenManager {
         Scene scene = new Scene(root, 1024, 768);
         stage.setScene(scene);
     }
+
+    
 }
