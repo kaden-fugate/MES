@@ -1,14 +1,15 @@
 #include "../include/db_conn.h"
 #include <iostream>
 
-using mes::row;
+using row        = mes::row;
+using writer     = mes::db_conn;
 
 int main() {
 
     int i;
 
     try {
-        mes::db_conn conn("/Users/kadenator/Desktop/Code/MES/Database/MESDB.db");
+        writer conn("/Users/kadenator/Desktop/Code/MES/Database/MESDB.db");
 
         // select test lot
         vector<row> rows = conn.query_all(

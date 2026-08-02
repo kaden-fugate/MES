@@ -1,14 +1,18 @@
 all:
 	make clean
 	make build
-	make run
 
 build:
 	cmake -S . -B build
 	cmake --build build
 
-run:
-	./build/mes_server
+test: build test_db_conn test_db_pool
+
+test_db_conn: build
+	./build/test_db_conn
+
+test_db_pool: build
+	./build/test_db_pool
 
 clean:
 	rm -rf build/
