@@ -10,7 +10,6 @@ using std::queue;               using std::unique_lock; using std::mutex;
 using std::condition_variable;  using std::unique_ptr; 
 using std::make_unique;         using std::lock_guard;
 
-
 namespace mes {
 
     template <typename T>

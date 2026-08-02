@@ -4,32 +4,16 @@
 #include <string>
 #include <vector>
 #include <variant>
-#include <optional>
-#include <unordered_map>
 #include <stdexcept>
 
+#include "errors.h"
+#include "row.h"
+
 using std::string;   using std::runtime_error; using std::vector;
-using std::variant;  using std::optional;      using std::unordered_map;
                      using std::visit;         using std::decay_t;
-using std::is_same_v;using std::monostate;     using std::optional;
+using std::is_same_v;using std::monostate;
 
 namespace mes {
-
-    using sql_var = std::variant<std::monostate, int64_t, double, string>;
-
-    struct row {
-        unordered_map<string, sql_var> cols;
-
-        template <typename T>
-        T get(const string &name) const {
-            return std::get<T>(cols.at(name));
-        }
-    }; // row
-
-    class db_err : public runtime_error {
-        public:
-            explicit db_err(const string &msg) : runtime_error(msg) {}
-    }; // db_err
 
     class r_conn {
         protected:
@@ -49,7 +33,7 @@ namespace mes {
             r_conn(const r_conn&)            = delete;                   // no CC or AOO to avoid duplicating db conns
             r_conn& operator=(const r_conn&) = delete;
 
-            optional<row> query_one(
+            opt query_one(
                 const string &sql, const vector<sql_var> parms = {}
             );
             vector<row> query_all(

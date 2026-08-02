@@ -1,7 +1,10 @@
 #pragma once
 
 #include "db_conn.h"
+#include "errors.h"
 #include <iostream>
+
+using std::format;
 
 /******************************************************************************
 *
@@ -14,7 +17,7 @@
 ******************************************************************************/
 template <typename conn_type, typename request, typename response>
 class transaction {
-    private:
+    protected:
         conn_type &conn_;
         virtual response exec(const request&) = 0;
 

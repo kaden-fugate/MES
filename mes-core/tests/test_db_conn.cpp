@@ -1,7 +1,6 @@
 #include "../include/db_conn.h"
 #include <iostream>
 
-using row        = mes::row;
 using writer     = mes::db_conn;
 
 int main() {

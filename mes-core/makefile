@@ -3,7 +3,7 @@ all:
 	make build
 
 build:
-	cmake -S . -B build
+	cmake -S . -B build -Wno-dev
 	cmake --build build
 
 test: build test_db_conn test_db_pool

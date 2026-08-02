@@ -58,7 +58,7 @@ sqlite3_stmt* r_conn::prepare(
     return stmt;
 } // prepare
 
-optional<row> r_conn::query_one(
+opt r_conn::query_one(
     const string &sql, const vector<sql_var> parms
 ) 
 {

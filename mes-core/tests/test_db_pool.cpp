@@ -1,7 +1,8 @@
-#include "../include/db_pool.h"
 #include <iostream>
 
-using row        = mes::row;
+#include "db_pool.h"
+#include "row.h"
+
 using read_pool  = mes::db_pool<mes::r_conn>;
 using reader     = mes::db_pool<mes::r_conn>::pool_conn;
 using write_pool = mes::db_pool<mes::db_conn>;
@@ -56,7 +57,7 @@ bool read_test() {
         // r_conn->rollback();
         
         // all query functions are allowed in read connection
-        optional<row> o_row = r_conn->query_one(
+        opt o_row = r_conn->query_one(
             "SELECT * FROM LOT WHERE LOT_ID = ?", {string("TEST")}
         );
 
