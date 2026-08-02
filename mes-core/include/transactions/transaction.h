@@ -1,6 +1,7 @@
 #pragma once
 
 #include "db_conn.h"
+#include <iostream>
 
 /******************************************************************************
 *
@@ -12,16 +13,19 @@
 *
 ******************************************************************************/
 template <typename conn_type, typename request, typename response>
-class transcation {
+class transaction {
     private:
         conn_type &conn_;
-        virtual response exec(request) = 0;
+        virtual response exec(const request&) = 0;
 
     public:
-        response run(request){
+        explicit transaction(conn_type &conn) : conn_(conn) {}
+        virtual ~transaction() = default;
+
+        response run(request req){
             conn_.begin();
             try {
-                response res = exec(request);
+                response res = exec(req);
                 conn_.commit();
                 return res;
             }
@@ -33,8 +37,15 @@ class transcation {
         }
 };
 
+// template for read transactions
 template <typename request, typename response>
-using read_tx = transaction<r_conn, request, response>;
+using read_tx = transaction<mes::r_conn, request, response>;
 
+// template for write transactions
 template <typename request, typename response>
-using write_tx = transaction<r_conn, request, response>;
+using write_tx = transaction<mes::db_conn, request, response>;
+
+// macro for inheriting the constructor in child classes
+#define inherit_tx(alias, req, res) \
+    using base = alias<req, res>;   \
+    using base::base;
