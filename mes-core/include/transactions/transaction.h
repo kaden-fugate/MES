@@ -11,14 +11,30 @@
 *               specific derivation of this class.
 *
 ******************************************************************************/
-template <typename req, typename res>
+template <typename conn_type, typename request, typename response>
 class transcation {
     private:
-        db_conn &conn_;
+        conn_type &conn_;
+        virtual response exec(request) = 0;
 
     public:
-        res run(req){
-            
+        response run(request){
+            conn_.begin();
+            try {
+                response res = exec(request);
+                conn_.commit();
+                return res;
+            }
+            catch (mes::db_err &e) {
+                std::cout << e.what() << "\n";
+                conn_.rollback();
+                throw;
+            }
         }
-        virtual res exec(req) = 0;
 };
+
+template <typename request, typename response>
+using read_tx = transaction<r_conn, request, response>;
+
+template <typename request, typename response>
+using write_tx = transaction<r_conn, request, response>;

@@ -6,6 +6,27 @@ namespace mes {
 **                          READ-ONLY DB CONNECTION                          **
 ******************************************************************************/
 
+void r_conn::begin() {
+ 
+    if (sqlite3_exec(handle_, "BEGIN;", nullptr, nullptr, nullptr) != SQLITE_OK)
+        throw db_err("BEGIN failed:\n" + string(sqlite3_errmsg(handle_)));
+
+} // begin
+
+void r_conn::commit() {
+
+    if (sqlite3_exec(handle_, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK)
+        throw db_err("COMMIT failed:\n" + string(sqlite3_errmsg(handle_)));
+
+} // commit
+
+void r_conn::rollback() {
+
+    if (sqlite3_exec(handle_, "ROLLBACK;", nullptr, nullptr, nullptr) != SQLITE_OK)
+        throw db_err("ROLLBACK failed:\n" + string(sqlite3_errmsg(handle_)));
+
+} // rollback
+
 sqlite3_stmt* r_conn::prepare(
     const string &sql, const vector<sql_var> &parms
 )
@@ -16,7 +37,7 @@ sqlite3_stmt* r_conn::prepare(
             handle_, sql.c_str(), -1, &stmt, nullptr
         ) != SQLITE_OK 
     )
-        throw tx_err("PREPARE failed:\n" + string(sqlite3_errmsg(handle_)));
+        throw db_err("PREPARE failed:\n" + string(sqlite3_errmsg(handle_)));
     
     // bind the actual values depending on type
     for (size_t i = 0; i < parms.size(); i++) {
@@ -87,7 +108,7 @@ vector<row> r_conn::query_all(
 db_conn::db_conn(const string &path) {
 
     if (sqlite3_open(path.c_str(), &handle_) != SQLITE_OK)
-        throw tx_err("Failed to open db:\n" + string(sqlite3_errmsg(handle_)));
+        throw db_err("Failed to open db:\n" + string(sqlite3_errmsg(handle_)));
     
     sqlite3_extended_result_codes(handle_, 1);
     sqlite3_busy_timeout(handle_, 1000);
@@ -98,27 +119,6 @@ db_conn::db_conn(const string &path) {
 
 db_conn::~db_conn() { if (handle_) sqlite3_close(handle_); } // ~db_conn
 
-void db_conn::begin() {
- 
-    if (sqlite3_exec(handle_, "BEGIN;", nullptr, nullptr, nullptr) != SQLITE_OK)
-        throw tx_err("BEGIN failed:\n" + string(sqlite3_errmsg(handle_)));
-
-} // begin
-
-void db_conn::commit() {
-
-    if (sqlite3_exec(handle_, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK)
-        throw tx_err("COMMIT failed:\n" + string(sqlite3_errmsg(handle_)));
-
-} // commit
-
-void db_conn::rollback() {
-
-    if (sqlite3_exec(handle_, "ROLLBACK;", nullptr, nullptr, nullptr) != SQLITE_OK)
-        throw tx_err("ROLLBACK failed:\n" + string(sqlite3_errmsg(handle_)));
-
-} // rollback
-
 void db_conn::execute(const string &sql, const vector<sql_var> &parms) {
 
     sqlite3_stmt *stmt = prepare(sql, parms);
@@ -126,7 +126,7 @@ void db_conn::execute(const string &sql, const vector<sql_var> &parms) {
     sqlite3_finalize(stmt);
 
     if (rc != SQLITE_DONE) {
-        throw tx_err("EXECUTE failed:\n" + string(sqlite3_errmsg(handle_)));
+        throw db_err("EXECUTE failed:\n" + string(sqlite3_errmsg(handle_)));
     }
 
 } // execute
