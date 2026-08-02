@@ -7,11 +7,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(mes_core STATIC
     src/db_conn.cpp
-    src/db_pool.cpp
+    src/tx000.cpp
 )
 
-target_include_directories(mes_core
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(mes_core PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/transactions
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/models
 )
 
 find_package(SQLite3 REQUIRED)
