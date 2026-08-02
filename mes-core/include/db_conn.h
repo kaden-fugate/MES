@@ -26,10 +26,10 @@ namespace mes {
         }
     }; // row
 
-    class tx_err : public runtime_error {
+    class db_err : public runtime_error {
         public:
-            explicit tx_err(const string &msg) : runtime_error(msg) {}
-    }; // tx_err
+            explicit db_err(const string &msg) : runtime_error(msg) {}
+    }; // db_err
 
     class r_conn {
         protected:
@@ -41,6 +41,10 @@ namespace mes {
 
         public:
             virtual ~r_conn() = default;
+
+            void begin();
+            void commit();
+            void rollback();
 
             r_conn(const r_conn&)            = delete;                   // no CC or AOO to avoid duplicating db conns
             r_conn& operator=(const r_conn&) = delete;
@@ -58,10 +62,6 @@ namespace mes {
         public:
             explicit db_conn(const string &path);
             ~db_conn() override;
-
-            void begin();
-            void commit();
-            void rollback();
 
             void execute(const string &sql, const vector<sql_var> &parms = {});
     }; // db_conn
